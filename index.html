@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>आंगनवाड़ी ICDS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffdfd; color: #333; }
+    header {
+      background: linear-gradient(135deg, #ff7043, #ff4d6d, #ff80ab);
+      color: white; padding: 25px 15px; text-align: center;
+      animation: gradientBG 12s ease infinite; background-size: 400% 400%;
+    }
+    .golden-divider {
+      height: 4px;
+      background: linear-gradient(90deg, #ffd700, #ffcc33, #ffb300, #ffd54f, #ffd700);
+      box-shadow: 0 0 12px rgba(255,215,0,0.8);
+      background-size: 200% 200%; border-radius: 3px; margin: 15px 0;
+      opacity: 0; transform: translateY(15px); transition: all 1s ease;
+    }
+    .golden-divider.visible { opacity: 1; transform: translateY(0); animation: shimmer 6s infinite linear; }
+
+    nav { background: #d84315; padding: 12px; text-align: center; }
+    nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; transition: 0.3s; }
+    nav a:hover { text-shadow: 0 0 10px gold; }
+
+    section { padding: 20px; }
+    .card { background: #fff7f9; padding: 18px; margin: 18px 0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(218,165,32,0.4); }
+    h2 { background: linear-gradient(90deg, #ffcc33, #ffb300, #ffd54f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+
+    .yt-link { display: inline-block; margin-top: 10px; padding: 10px 15px; background: #ff1744; color: white; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s; border: 1px solid gold; }
+    .yt-link:hover { background: #d50000; box-shadow: 0 0 15px gold; transform: scale(1.05); }
+
+    footer { text-align: center; padding: 35px 15px; color: white; background: linear-gradient(135deg, #6a11cb, #ff4d6d); background-size: 400% 400%; animation: gradientBG 14s ease infinite; border-top: 3px solid gold; }
+    .follow-title { font-size: 14px; font-style: italic; font-weight: normal; letter-spacing: 0.8px; margin-bottom: 14px; color: #ffe082; opacity: 0; animation: fadeSlideUp 1.2s forwards ease-out; }
+    .social-icons { display: flex; justify-content: center; gap: 18px; }
+    .social-icons a { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; opacity: 0; transform: scale(0.5) translateY(20px); animation: bounceGlow 1s forwards; border: 2px solid gold; }
+    .social-icons .youtube { background: #ff0000; animation-delay: 0.4s; }
+    .social-icons .instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%); animation-delay: 0.8s; }
+    .social-icons .x { background: #000; animation-delay: 1.2s; }
+    .social-icons a:hover { transform: scale(1.2) rotate(5deg); box-shadow: 0 0 18px gold; }
+
+    /* Job Table */
+    .job-table-container { overflow-x: auto; margin-top: 15px; }
+    .job-table { width: 100%; border-collapse: collapse; font-size: 15px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+    .job-table th, .job-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #f0e68c; }
+    .job-table th { background: linear-gradient(90deg, #ffcc33, #ffb300, #ffd54f); color: #333; font-weight: bold; }
+    .job-table tr:hover { background: #fff3cd; transition: 0.3s; }
+    .job-table a { color: #d84315; text-decoration: none; font-weight: bold; }
+    .job-table a:hover { text-decoration: underline; color: #b71c1c; }
+    .apply-btn { display: inline-block; padding: 6px 12px; background: linear-gradient(90deg, #ff7043, #ff4d6d); color: white; font-size: 13px; font-weight: bold; border-radius: 6px; text-decoration: none; transition: 0.3s; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
+    .apply-btn:hover { background: linear-gradient(90deg, #ff4d6d, #ff1744); box-shadow: 0 0 12px gold; transform: scale(1.08); }
+
+    /* Popup Form */
+    .popup-form {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 999;
+    }
+    .popup-content {
+      background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; position: relative;
+    }
+    .popup-content h3 { margin-top: 0; text-align: center; }
+    .popup-content input, .popup-content button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+    .popup-content button { background: linear-gradient(90deg, #ff7043, #ff4d6d); color: white; border: none; cursor: pointer; font-weight: bold; }
+    .popup-content button:hover { background: linear-gradient(90deg, #ff4d6d, #ff1744); }
+
+    .close-btn { position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer; color: #333; }
+
+    /* Animations */
+    @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes bounceGlow { 0% { opacity: 0; transform: scale(0.5) translateY(20px); } 60% { opacity: 1; transform: scale(1.2) translateY(-5px); box-shadow: 0 0 12px gold;} 100% { opacity: 1; transform: scale(1) translateY(0); box-shadow: 0 0 6px rgba(255,215,0,0.6);} }
+    @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>आंगनवाड़ी ICDS</h1>
+  <p>बच्चों और माताओं के लिए समग्र विकास सेवाएं</p>
+</header>
+<div class="golden-divider"></div>
+
+<nav>
+  <a href="#home">होम</a>
+  <a href="#anganwadi">आंगनवाड़ी</a>
+  <a href="#supervisor">सुपरवाइजर</a>
+  <a href="#news">खबरें</a>
+  <a href="#jobs">नौकरियां</a>
+  <a href="#contact">संपर्क करें</a>
+</nav>
+
+<section id="home">
+  <div class="card"><div class="golden-divider"></div><h2>स्वागत है</h2><p>आंगनवाड़ी ICDS कार्यक्रम का उद्देश्य बच्चों के सर्वांगीण विकास और महिलाओं के स्वास्थ्य एवं पोषण की देखभाल करना है।</p></div>
+</section>
+
+<section id="anganwadi">
+  <div class="card"><div class="golden-divider"></div><h2>आंगनवाड़ी</h2><p>ICDS भारत सरकार की प्रमुख योजना है जो बच्चों और माताओं के पोषण, स्वास्थ्य और शिक्षा पर केंद्रित है।</p></div>
+</section>
+
+<section id="supervisor">
+  <div class="card"><div class="golden-divider"></div><h2>सुपरवाइजर</h2><p>आंगनवाड़ी सुपरवाइजर कार्यों की निगरानी करती हैं और सेवाओं की गुणवत्ता सुनिश्चित करती हैं।</p></div>
+</section>
+
+<section id="news">
+  <div class="card"><div class="golden-divider"></div><h2>खबरें</h2><p>ICDS और आंगनवाड़ी से संबंधित ताज़ा खबरें और अपडेट यहां उपलब्ध होंगी।</p></div>
+</section>
+
+<section id="jobs">
+  <div class="card">
+    <div class="golden-divider"></div>
+    <h2>नौकरियां</h2>
+    <p>आंगनवाड़ी से संबंधित भर्ती और रोजगार अवसरों की जानकारी यहां देखें:</p>
+    <div class="job-table-container">
+      <table class="job-table">
+        <thead>
+          <tr><th>पद</th><th>प्रकाशित तिथि</th><th>लिंक</th><th>आवेदन</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>आंगनवाड़ी कार्यकर्ता</td>
+            <td>15 अगस्त 2025</td>
+            <td><a href="#">🔗 देखें</a></td>
+            <td><a href="#" class="apply-btn" onclick="openForm()">Apply Now</a></td>
+          </tr>
+          <tr>
+            <td>सहायिका</td>
+            <td>10 अगस्त 2025</td>
+            <td><a href="#">🔗 देखें</a></td>
+            <td><a href="#" class="apply-btn" onclick="openForm()">Apply Now</a></td>
+          </tr>
+          <tr>
+            <td>सुपरवाइजर</td>
+            <td>01 अगस्त 2025</td>
+            <td><a href="#">🔗 देखें</a></td>
+            <td><a href="#" class="apply-btn" onclick="openForm()">Apply Now</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact">
+  <div class="card">
+    <div class="golden-divider"></div>
+    <h2>संपर्क करें</h2>
+    <p>📍 पता: आपका स्थानीय आंगनवाड़ी केंद्र</p>
+    <p>📞 मोबाइल: 9318312478</p>
+    <p>📧 ईमेल: icds22supervoiser@gmail.com</p>
+    <a class="yt-link" href="https://youtube.com/@icds-1975" target="_blank">👉 हमारा यूट्यूब चैनल देखें</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2025 आंगनवाड़ी ICDS | सभी अधिकार सुरक्षित</p>
+  <div class="follow
+  div class="follow-title">Follow us for more updates</div>
+  <div class="social-icons">
+    <a href="https://youtube.com/@icds-1975" target="_blank" class="youtube"><i class="fab fa-youtube"></i></a>
+    <a href="https://www.instagram.com/icds1975?igsh=MXhha3preWhvbTI4OA==" target="_blank" class="instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://x.com/ICDS_1975?t=n1tT1BMufvo2i_aNbzA_eA&s=09" target="_blank" class="x"><i class="fab fa-x-twitter"></i></a>
+  </div>
+</footer>
+
+<script>
+  // Scroll animation for golden dividers
+  const dividers = document.querySelectorAll('.golden-divider');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.3 });
+  dividers.forEach(divider => observer.observe(divider));
+</script>
+
+</body>
+</html
